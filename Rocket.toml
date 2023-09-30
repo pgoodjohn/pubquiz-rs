@@ -1,0 +1,2 @@
+[global.databases]
+db = { url = "mysql://pubquiz:pubquiz@127.0.0.1:33306/pubquiz" }

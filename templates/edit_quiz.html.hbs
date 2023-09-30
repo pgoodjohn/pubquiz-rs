@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Host Dashboard</title>
+</head>
+
+<body>
+    <h1>{{quiz.date}}</h1>
+    <h2>{{uuid}}</h2>
+    <div>
+        {{#each questions}}
+        <li>{{section}}. {{question}} - {{answer}}</li>
+        {{/each}}
+    </div>
+    <form action="/host/quiz/{{uuid}}/questions" method="post">
+        <div>
+            <label>Question</label>
+            <textarea name='question' id="question" required></textarea>
+        </div>
+        <div>
+            <label>Answer</label>
+            <textarea name="answer"></textarea>
+        </div>
+        <div>
+            <label>Section</label>
+            <input type="number" name="section" required />
+        </div>
+        <button type="submit">Save</button>
+    </form>
+</body>
+
+</html>

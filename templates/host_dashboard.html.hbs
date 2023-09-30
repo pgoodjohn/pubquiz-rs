@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Host Dashboard</title>
+</head>
+
+<body>
+    {{#if authenticated}}
+    <h1>Welcome, Host!</h1>
+    <!-- Add quiz creation and list display here -->
+    <form action="/host/create_quiz" method="post">
+        <label for="date">Quiz Date:</label>
+        <input type="date" id="date" name="date" required>
+
+        <button type="submit">Create Quiz</button>
+
+        <br />
+
+        <h2>List of Quizzes</h2>
+        <ul>
+            {{#each quizzes}}
+            <li>
+                {{date}} - {{quiz_code}} - <a href="/host/quiz/{{id}}">edit</a>
+            </li>
+            {{/each}}
+        </ul>
+
+    </form>
+    {{else}}
+    <form action="/host/authenticate" method="post">
+        <label>Password: </label>
+        <input type="password" name="password" id='password'>
+        <button type="submit">Log in</button>
+    </form>
+    {{/if}}
+</body>
+
+</html>

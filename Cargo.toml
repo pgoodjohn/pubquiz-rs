@@ -1,0 +1,22 @@
+[package]
+name = "pubquiz-rs"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+digest = "0.10.7"
+dotenv = "0.15.0"
+log = "0.4.20"
+mysql = "24.0.0"
+plogger = "0.0.1"
+rand = "0.8.5"
+rocket = { version = "0.5.0-rc.3", features= ["secrets"] } 
+rocket_contrib = "0.4.11"
+rocket_dyn_templates = { version = "0.1.0-rc.3", features = ["handlebars"] }
+tera = "1.19.1"
+rocket_db_pools = { version = "0.1.0-rc.3", features = ["sqlx_mysql"] }
+uuid = { version = "1.4.1", features = ["v4", "serde"] }
+serde = { version = "1.0.188", features = ["derive"] }
+
