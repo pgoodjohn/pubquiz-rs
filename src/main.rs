@@ -3,6 +3,7 @@ extern crate rocket;
 extern crate mysql;
 
 use dotenv::dotenv;
+use group::Group;
 use plogger;
 use rand::Rng;
 use rocket::form::{validate, Form};
@@ -22,6 +23,7 @@ use uuid::Uuid;
 use serde::Serialize;
 
 mod auth;
+mod group;
 
 #[derive(Database)]
 #[database("db")]
@@ -77,6 +79,37 @@ async fn host_dashboard(cookies: &CookieJar<'_>, mut db: Connection<Db>) -> Temp
         };
         Template::render("host_dashboard", &context)
     }
+}
+
+#[derive(Debug, Serialize)]
+struct ViewQuizAsParticipantContext {
+    quiz: Quiz,
+    group: Option<Group>,
+}
+
+#[get("/quiz/<code>")]
+async fn view_quiz(code: u16, cookies: &CookieJar<'_>, mut db: Connection<Db>) -> Template {
+    let quiz = Quiz::find_by_code(code, &mut *db).await.unwrap();
+
+    if let Some(cookie) = cookies.get_private("registered_group") {
+        let context = ViewQuizAsParticipantContext {
+            quiz: quiz,
+            group: Some(Group::from_cookie(cookie)),
+        };
+
+        log::debug!("{:?}", context);
+
+        return Template::render("quiz", &context);
+    }
+
+    log::debug!("No group cookie found rendering signup page");
+
+    let context = ViewQuizAsParticipantContext {
+        quiz: quiz,
+        group: None,
+    };
+
+    Template::render("quiz", &context)
 }
 
 #[derive(FromForm)]
@@ -156,6 +189,14 @@ impl Quiz {
             .fetch_one(db)
             .await
             .unwrap();
+
+        Ok(Quiz::from_mysql_row(result))
+    }
+
+    pub async fn find_by_code(code: u16, db: &mut PoolConnection<MySql>) -> Result<Quiz, String> {
+        let query = "SELECT * FROM quizzes WHERE quiz_code = ? LIMIT 1";
+
+        let result = sqlx::query(query).bind(code).fetch_one(db).await.unwrap();
 
         Ok(Quiz::from_mysql_row(result))
     }
@@ -305,9 +346,11 @@ fn rocket() -> _ {
                 index,
                 host_dashboard,
                 view_quiz_as_host,
+                view_quiz,
                 create_quiz,
                 add_question_to_quiz,
-                auth::authenticate
+                auth::authenticate,
+                group::signup,
             ],
         )
 }

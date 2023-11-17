@@ -2689,6 +2689,7 @@ dependencies = [
  "rocket_db_pools",
  "rocket_dyn_templates",
  "serde",
+ "serde_json",
  "tera",
  "uuid",
 ]
